@@ -46,9 +46,9 @@ Submission Date: 2025-10-30
                             <hr class="my-2">
                             <p class="mb-0">
                                 <strong>Departure:</strong> 
-                                <span th:text="${#temporals.format(flight.departure_time, 'EEEE, MMMM dd, yyyy at HH:mm')}">
-                                    Monday, November 01, 2025 at 10:00
-                                </span>
+                                <span th:text="${#temporals.format(reservation.flight.departure_time, 'EEEE, MMMM dd, yyyy ''at'' HH:mm')}">
+								    Monday, November 01, 2025 at 10:00
+								</span>
                             </p>
                         </div>
 

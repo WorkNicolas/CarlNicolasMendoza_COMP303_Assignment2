@@ -34,12 +34,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 	http.authorizeHttpRequests(
-		auth -> auth.requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/images/**").permitAll()
-			.anyRequest().authenticated())
+		auth -> auth.requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/images/**", "/error")
+			.permitAll().anyRequest().authenticated())
 		.formLogin(form -> form.loginPage("/login").loginProcessingUrl("/login")
 			.defaultSuccessUrl("/flights", true).permitAll())
-		.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/").permitAll())
-		.csrf(csrf -> csrf.disable()); // For simplicity in development
+		.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/").permitAll());
 
 	return http.build();
     }
