@@ -1,0 +1,171 @@
+<!-- 
+Student Name: Carl Nicolas Mendoza
+Student Number: 301386435
+Submission Date: 2025-10-30
+ -->
+
+<!-- File: src/main/resources/templates/reservation-list.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+<main class="py-5">
+    <div class="container">
+        <h2 class="mb-4">My Reservations</h2>
+
+        <!-- Success/Info Messages -->
+        <div th:if="${param.updated}" class="alert alert-success alert-dismissible fade show" role="alert">
+            Reservation updated successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${param.cancelled}" class="alert alert-warning alert-dismissible fade show" role="alert">
+            Reservation cancelled successfully.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${param.deleted}" class="alert alert-info alert-dismissible fade show" role="alert">
+            Reservation deleted successfully.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            Reservation not found.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${#lists.isEmpty(reservations)}" class="text-center py-5">
+            <div class="display-1 text-muted mb-3">📋</div>
+            <h4>No Reservations Yet</h4>
+            <p class="text-muted">You haven't made any flight reservations yet.</p>
+            <a href="/flights" class="btn btn-primary mt-3">Browse Flights</a>
+        </div>
+
+        <!-- Reservations Table -->
+        <div th:unless="${#lists.isEmpty(reservations)}" class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Flight</th>
+                        <th>Route</th>
+                        <th>Departure</th>
+                        <th>Passengers</th>
+                        <th>Total Price</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="reservation : ${reservations}">
+                        <td>
+                            <strong th:text="${'#' + reservation.reservation_id}">#1</strong>
+                        </td>
+                        <td>
+                            <div th:text="${reservation.flight.airline_name}">Air Canada</div>
+                            <small class="text-muted" th:text="${'Flight ' + reservation.flight.flight_id}">Flight 123</small>
+                        </td>
+                        <td>
+                            <span th:text="${reservation.flight.origin + ' → ' + reservation.flight.destination}">
+                                Toronto → Vancouver
+                            </span>
+                        </td>
+                        <td th:text="${#temporals.format(reservation.departure_date, 'MMM dd, yyyy')}">Nov 01, 2025</td>
+                        <td th:text="${reservation.no_of_passengers}">2</td>
+                        <td>
+                            <strong th:text="${'$' + #numbers.formatDecimal(reservation.total_price, 1, 2)}">$599.98</strong>
+                        </td>
+                        <td>
+                            <span th:if="${reservation.status == 'BOOKED'}" class="badge bg-success">BOOKED</span>
+                            <span th:if="${reservation.status == 'CONFIRMED'}" class="badge bg-primary">CONFIRMED</span>
+                            <span th:if="${reservation.status == 'CANCELLED'}" class="badge bg-danger">CANCELLED</span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <!-- Only show actions if not cancelled -->
+                                <th:block th:if="${reservation.status != 'CANCELLED'}">
+                                    <a th:href="@{/reservations/edit/{id}(id=${reservation.reservation_id})}"
+                                       class="btn btn-outline-primary" title="Edit">
+                                        ✏️
+                                    </a>
+                                    <a th:href="@{/reservations/cancel/{id}(id=${reservation.reservation_id})}"
+                                       class="btn btn-outline-warning"
+                                       title="Cancel"
+                                       data-confirm="Are you sure you want to cancel this reservation?">
+                                        ❌
+                                    </a>
+                                </th:block>
+                                <a th:href="@{/reservations/delete/{id}(id=${reservation.reservation_id})}"
+                                   class="btn btn-outline-danger"
+                                   title="Delete"
+                                   data-confirm="Are you sure you want to permanently delete this reservation?">
+                                    🗑️
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Reservation Cards (Mobile Friendly) -->
+        <div th:unless="${#lists.isEmpty(reservations)}" class="d-lg-none mt-4">
+            <div class="card mb-3" th:each="reservation : ${reservations}">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <strong th:text="${'Booking #' + reservation.reservation_id}">#1</strong>
+                        <span th:if="${reservation.status == 'BOOKED'}" class="badge bg-success">BOOKED</span>
+                        <span th:if="${reservation.status == 'CONFIRMED'}" class="badge bg-primary">CONFIRMED</span>
+                        <span th:if="${reservation.status == 'CANCELLED'}" class="badge bg-danger">CANCELLED</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 th:text="${reservation.flight.airline_name}">Air Canada</h5>
+                    <p class="mb-2">
+                        <strong>Route:</strong>
+                        <span th:text="${reservation.flight.origin + ' → ' + reservation.flight.destination}">
+                            Toronto → Vancouver
+                        </span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Departure:</strong>
+                        <span th:text="${#temporals.format(reservation.departure_date, 'MMM dd, yyyy')}">Nov 01, 2025</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Passengers:</strong>
+                        <span th:text="${reservation.no_of_passengers}">2</span>
+                    </p>
+                    <p class="mb-3">
+                        <strong>Total:</strong>
+                        <span class="text-primary" th:text="${'$' + #numbers.formatDecimal(reservation.total_price, 1, 2)}">$599.98</span>
+                    </p>
+                    <div class="btn-group w-100" role="group" th:if="${reservation.status != 'CANCELLED'}">
+                        <a th:href="@{/reservations/edit/{id}(id=${reservation.reservation_id})}"
+                           class="btn btn-outline-primary">Edit</a>
+                        <a th:href="@{/reservations/cancel/{id}(id=${reservation.reservation_id})}"
+                           class="btn btn-outline-warning"
+                           data-confirm="Cancel this reservation?">Cancel</a>
+                        <a th:href="@{/reservations/delete/{id}(id=${reservation.reservation_id})}"
+                           class="btn btn-outline-danger"
+                           data-confirm="Delete permanently?">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back to Flights Button -->
+        <div class="text-center mt-4">
+            <a href="/flights" class="btn btn-outline-primary">Browse More Flights</a>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<!-- Page JS -->
+<!-- Location: src/main/resources/static/js/reservations.js -->
+<script th:src="@{/js/reservations.js}"></script>
+
+</body>
+</html>

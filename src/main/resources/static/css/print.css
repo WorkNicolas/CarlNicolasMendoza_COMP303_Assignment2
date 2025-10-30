@@ -1,0 +1,15 @@
+/* Student Name: Carl Nicolas Mendoza
+ * Student Number: 301386435
+ * Submission Date: 2025-10-30
+ */
+
+/* File: src/main/resources/static/css/print.css */
+@media print {
+  nav, footer, .btn, .alert-warning {
+    display: none !important;
+  }
+  .card {
+    border: 1px solid #000 !important;
+    page-break-inside: avoid;
+  }
+}

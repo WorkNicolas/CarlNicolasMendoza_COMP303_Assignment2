@@ -1,0 +1,214 @@
+<!-- 
+Student Name: Carl Nicolas Mendoza
+Student Number: 301386435
+Submission Date: 2025-10-30
+ -->
+
+<!-- File: src/main/resources/templates/confirmation.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+
+<!-- Location: src/main/resources/static/css/print.css -->
+<link th:href="@{/css/print.css}" rel="stylesheet" media="print">
+
+<body>
+
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+<main class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                
+                <!-- Success Message -->
+                <div class="text-center mb-5">
+                    <div class="display-1 text-success mb-3">✅</div>
+                    <h1 class="mb-3">Booking Confirmed!</h1>
+                    <p class="lead text-muted">
+                        Your flight reservation has been successfully confirmed.
+                        A confirmation email has been sent to 
+                        <strong th:text="${reservation.passenger.email}">your email</strong>.
+                    </p>
+                </div>
+
+                <!-- Confirmation Details Card -->
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">Confirmation Details</h4>
+                    </div>
+                    <div class="card-body">
+                        
+                        <!-- Booking Reference -->
+                        <div class="alert alert-success text-center mb-4">
+                            <h5 class="mb-2">Booking Reference Number</h5>
+                            <h2 class="mb-0 font-monospace" th:text="${'BR-' + reservation.reservation_id}">BR-123</h2>
+                            <small>Please save this reference number for your records</small>
+                        </div>
+
+                        <!-- Flight Details -->
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <h5 class="mb-3">✈️ Flight Information</h5>
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Airline:</strong></td>
+                                            <td th:text="${reservation.flight.airline_name}">Air Canada</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Flight Number:</strong></td>
+                                            <td th:text="${reservation.flight.flight_id}">AC123</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Route:</strong></td>
+                                            <td>
+                                                <span th:text="${reservation.flight.origin}">Toronto</span> 
+                                                → 
+                                                <span th:text="${reservation.flight.destination}">Vancouver</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Departure:</strong></td>
+                                            <td th:text="${#temporals.format(reservation.flight.departure_time, 'EEEE, MMMM dd, yyyy at HH:mm')}">
+                                                Monday, November 01, 2025 at 10:00
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Arrival:</strong></td>
+                                            <td th:text="${#temporals.format(reservation.flight.arrival_time, 'EEEE, MMMM dd, yyyy at HH:mm')}">
+                                                Monday, November 01, 2025 at 14:30
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Passengers:</strong></td>
+                                            <td th:text="${reservation.no_of_passengers + ' passenger(s)'}">2 passengers</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Booking Date:</strong></td>
+                                            <td th:text="${#temporals.format(reservation.booking_date, 'MMMM dd, yyyy')}">
+                                                October 30, 2025
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Status:</strong></td>
+                                            <td>
+                                                <span class="badge bg-primary" th:text="${reservation.status}">CONFIRMED</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Passenger Details -->
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <h5 class="mb-3">👤 Passenger Information</h5>
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Name:</strong></td>
+                                            <td th:text="${reservation.passenger.firstname + ' ' + reservation.passenger.lastname}">
+                                                John Doe
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Email:</strong></td>
+                                            <td th:text="${reservation.passenger.email}">john@example.com</td>
+                                        </tr>
+                                        <tr th:if="${reservation.passenger.address}">
+                                            <td><strong>Address:</strong></td>
+                                            <td>
+                                                <span th:text="${reservation.passenger.address}">123 Main St</span><br>
+                                                <span th:text="${reservation.passenger.city}">Toronto</span>, 
+                                                <span th:text="${reservation.passenger.postalCode}">M5H2N2</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Payment Summary -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5 class="mb-3">💰 Payment Summary</h5>
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td>Base Fare (per passenger)</td>
+                                            <td class="text-end" th:text="${'$' + #numbers.formatDecimal(reservation.flight.price, 1, 2)}">
+                                                $299.99
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Number of Passengers</td>
+                                            <td class="text-end" th:text="${'× ' + reservation.no_of_passengers}">× 2</td>
+                                        </tr>
+                                        <tr class="table-success">
+                                            <td><strong>Total Paid</strong></td>
+                                            <td class="text-end">
+                                                <strong th:text="${'$' + #numbers.formatDecimal(reservation.total_price, 1, 2)}">
+                                                    $599.98
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Important Information -->
+                <div class="card border-warning mb-4">
+                    <div class="card-header bg-warning">
+                        <h5 class="mb-0">⚠️ Important Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="mb-0">
+                            <li>Please arrive at the airport at least 2 hours before departure for domestic flights</li>
+                            <li>Check-in opens 24 hours before departure time</li>
+                            <li>Bring a valid government-issued photo ID</li>
+                            <li>Review the airline's baggage policy before your flight</li>
+                            <li>Confirmation email has been sent with your e-ticket</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-between mb-4">
+                    <a href="/reservations" class="btn btn-outline-primary btn-lg">
+                        View All Reservations
+                    </a>
+                    <button id="printBtn" class="btn btn-outline-secondary btn-lg">
+                        🖨️ Print Confirmation
+                    </button>
+                    <a href="/flights" class="btn btn-primary btn-lg">
+                        Book Another Flight
+                    </a>
+                </div>
+
+                <!-- Thank You Message -->
+                <div class="text-center text-muted">
+                    <p class="mb-2">Thank you for choosing FlightBook!</p>
+                    <p>Have a safe and pleasant journey! ✈️</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<!-- Page JS -->
+<!-- Location: src/main/resources/static/js/confirmation.js -->
+<script th:src="@{/js/confirmation.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!-- 
+Student Name: Carl Nicolas Mendoza
+Student Number: 301386435
+Submission Date: 2025-10-30
+ -->
+
+<!-- File: src/main/resources/templates/checkout.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+
+<!-- Uses global CSS -->
+<!-- Location: src/main/resources/static/css/main.css -->
+
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+<main class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 class="text-center mb-4">Checkout</h2>
+
+                <!-- Booking Summary Card -->
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Booking Summary</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Booking ID</h6>
+                                <p class="h5" th:text="${'#' + reservation.reservation_id}">#123</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted">Status</h6>
+                                <span class="badge bg-success fs-6" th:text="${reservation.status}">BOOKED</span>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <h5 class="mb-3">✈️ Flight Information</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <strong>Airline:</strong> <span th:text="${reservation.flight.airline_name}">Air Canada</span>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>Flight ID:</strong> <span th:text="${reservation.flight.flight_id}">123</span>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>Origin:</strong> <span th:text="${reservation.flight.origin}">Toronto</span>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>Destination:</strong> <span th:text="${reservation.flight.destination}">Vancouver</span>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>Departure:</strong> 
+                                <span th:text="${#temporals.format(reservation.flight.departure_time, 'MMM dd, yyyy HH:mm')}">
+                                    Nov 01, 2025 10:00
+                                </span>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>Arrival:</strong> 
+                                <span th:text="${#temporals.format(reservation.flight.arrival_time, 'MMM dd, yyyy HH:mm')}">
+                                    Nov 01, 2025 14:30
+                                </span>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <h5 class="mb-3">👤 Passenger Information</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <strong>Name:</strong> 
+                                <span th:text="${reservation.passenger.firstname + ' ' + reservation.passenger.lastname}">
+                                    John Doe
+                                </span>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>Email:</strong> 
+                                <span th:text="${reservation.passenger.email}">john@example.com</span>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>Number of Passengers:</strong> 
+                                <span th:text="${reservation.no_of_passengers}">2</span>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>Booking Date:</strong> 
+                                <span th:text="${#temporals.format(reservation.booking_date, 'MMM dd, yyyy')}">
+                                    Oct 30, 2025
+                                </span>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-2">Price Breakdown</h6>
+                                <p class="mb-1">
+                                    Base fare: 
+                                    <span th:text="${'$' + #numbers.formatDecimal(reservation.flight.price, 1, 2)}">$299.99</span>
+                                </p>
+                                <p class="mb-1">
+                                    Passengers: 
+                                    <span th:text="${reservation.no_of_passengers}">2</span>
+                                </p>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <h6 class="text-muted mb-2">Total Amount</h6>
+                                <h2 class="text-primary mb-0" 
+                                    th:text="${'$' + #numbers.formatDecimal(reservation.total_price, 1, 2)}">
+                                    $599.98
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Section -->
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">💳 Payment Information</h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/reservations/confirm/{id}(id=${reservation.reservation_id})}" method="post">
+                            
+                            <div class="mb-3">
+                                <label for="cardName" class="form-label">Cardholder Name</label>
+                                <input type="text" class="form-control" id="cardName" 
+                                       placeholder="John Doe" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="cardNumber" class="form-label">Card Number</label>
+                                <input type="text" class="form-control" id="cardNumber" 
+                                       inputmode="numeric" autocomplete="cc-number"
+                                       placeholder="1234 5678 9012 3456" maxlength="19" required>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="expiry" class="form-label">Expiry Date</label>
+                                    <input type="text" class="form-control" id="expiry" 
+                                           inputmode="numeric" autocomplete="cc-exp"
+                                           placeholder="MM/YY" maxlength="5" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="cvv" class="form-label">CVV</label>
+                                    <input type="text" class="form-control" id="cvv" 
+                                           inputmode="numeric" autocomplete="cc-csc"
+                                           placeholder="123" maxlength="3" required>
+                                </div>
+                            </div>
+
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    I agree to the <a href="#" class="text-primary">Terms and Conditions</a>
+                                </label>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <a href="/reservations" class="btn btn-outline-secondary">
+                                    Cancel
+                                </a>
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    Confirm Payment & Book
+                                    <span class="ms-2" th:text="${'$' + #numbers.formatDecimal(reservation.total_price, 1, 2)}">
+                                        $599.98
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Security Notice -->
+                <div class="alert alert-info">
+                    <h6 class="alert-heading">🔒 Secure Payment</h6>
+                    <p class="mb-0">
+                        Your payment information is encrypted and secure. We never store your complete card details.
+                        This is a demo application - no actual payment will be processed.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<!-- Page JS -->
+<!-- Location: src/main/resources/static/js/checkout.js -->
+<script th:src="@{/js/checkout.js}"></script>
+
+</body>
+</html>

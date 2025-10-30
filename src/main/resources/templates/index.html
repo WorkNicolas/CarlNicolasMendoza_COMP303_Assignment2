@@ -1,0 +1,77 @@
+<!-- 
+Student Name: Carl Nicolas Mendoza
+Student Number: 301386435
+Submission Date: 2025-10-30
+ -->
+
+<!-- File: src/main/resources/templates/index.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+<main>
+    <!-- Hero Section -->
+    <section class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-3 fw-bold mb-4">Welcome to FlightBook</h1>
+            <p class="lead mb-4">Book your dream flight in just a few clicks</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="/register" class="btn btn-light btn-lg">Get Started</a>
+                <a href="/flights" class="btn btn-outline-light btn-lg">Browse Flights</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Why Choose FlightBook?</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="display-4 text-primary mb-3">✈️</div>
+                            <h5 class="card-title">Wide Selection</h5>
+                            <p class="card-text">Choose from hundreds of flights to destinations worldwide</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="display-4 text-success mb-3">💰</div>
+                            <h5 class="card-title">Best Prices</h5>
+                            <p class="card-text">Get competitive prices and exclusive deals on flights</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="display-4 text-info mb-3">🔒</div>
+                            <h5 class="card-title">Secure Booking</h5>
+                            <p class="card-text">Your data and payments are protected with industry-leading security</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="bg-light py-5">
+        <div class="container text-center">
+            <h2 class="mb-4">Ready to Book Your Next Adventure?</h2>
+            <p class="lead mb-4">Join thousands of satisfied travelers who trust FlightBook</p>
+            <a href="/register" class="btn btn-primary btn-lg">Create Free Account</a>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

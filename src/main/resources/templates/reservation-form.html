@@ -1,0 +1,135 @@
+<!-- 
+Student Name: Carl Nicolas Mendoza
+Student Number: 301386435
+Submission Date: 2025-10-30
+ -->
+
+<!-- File: src/main/resources/templates/reservation-form.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}"></head>
+<body>
+
+<nav th:replace="~{fragments/header :: navbar}"></nav>
+
+<main class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0" th:text="${reservation.reservation_id != null ? 'Edit Reservation' : 'New Reservation'}">
+                            New Reservation
+                        </h3>
+                    </div>
+                    <div class="card-body p-4">
+                        
+                        <!-- Flight Details Summary -->
+                        <div class="alert alert-info mb-4">
+                            <h5 class="alert-heading">✈️ Flight Details</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Airline:</strong> <span th:text="${flight.airline_name}">Air Canada</span></p>
+                                    <p class="mb-1"><strong>Flight ID:</strong> <span th:text="${flight.flight_id}">123</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-1">
+                                        <strong>Route:</strong> 
+                                        <span th:text="${flight.origin + ' → ' + flight.destination}">Toronto → Vancouver</span>
+                                    </p>
+                                    <p class="mb-1">
+                                        <strong>Price per seat:</strong> 
+                                        <span class="text-primary" th:text="${'$' + #numbers.formatDecimal(flight.price, 1, 2)}">$299.99</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <hr class="my-2">
+                            <p class="mb-0">
+                                <strong>Departure:</strong> 
+                                <span th:text="${#temporals.format(flight.departure_time, 'EEEE, MMMM dd, yyyy at HH:mm')}">
+                                    Monday, November 01, 2025 at 10:00
+                                </span>
+                            </p>
+                        </div>
+
+                        <!-- Reservation Form -->
+                        <form th:action="${reservation.reservation_id != null ? '/reservations/update/' + reservation.reservation_id : '/reservations/save'}" 
+                              th:object="${reservation}" method="post">
+                            
+                            <!-- Hidden fields -->
+                            <input type="hidden" name="flightId" th:value="${flight.flight_id}">
+                            <input type="hidden" name="passengerId" th:value="${reservation.passenger.passenger_id}">
+
+                            <div class="mb-3">
+                                <label for="departure_date" class="form-label">Departure Date *</label>
+                                <input type="date" class="form-control" th:field="*{departure_date}" 
+                                       id="departure_date" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('departure_date')}" 
+                                     th:errors="*{departure_date}"></div>
+                                <small class="form-text text-muted">Select your preferred departure date</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="no_of_passengers" class="form-label">Number of Passengers *</label>
+                                <input type="number" class="form-control" th:field="*{no_of_passengers}" 
+                                       id="no_of_passengers" min="1" max="10" value="1" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('no_of_passengers')}" 
+                                     th:errors="*{no_of_passengers}"></div>
+                                <small class="form-text text-muted">Enter the total number of passengers (1-10)</small>
+                            </div>
+
+                            <!-- Total Price Display (Read-only, calculated on server; preview updated by JS) -->
+                            <div class="mb-4">
+                                <div class="p-3 bg-light rounded" id="priceContext" th:attr="data-price=${flight.price}">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0">Estimated Total:</h5>
+                                        <h4 class="text-primary mb-0">
+                                            <span id="totalPrice" 
+                                                  th:text="${reservation.total_price != null ? '$' + #numbers.formatDecimal(reservation.total_price, 1, 2) : 'Calculated at checkout'}">
+                                                $299.99
+                                            </span>
+                                        </h4>
+                                    </div>
+                                    <small class="text-muted">Final price will be calculated based on number of passengers</small>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex justify-content-between">
+                                <a href="/flights" class="btn btn-outline-secondary">
+                                    ← Back to Flights
+                                </a>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <span th:text="${reservation.reservation_id != null ? 'Update Reservation' : 'Proceed to Checkout'}">
+                                        Proceed to Checkout
+                                    </span>
+                                    →
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Important Information -->
+                <div class="alert alert-warning mt-4">
+                    <h6 class="alert-heading">📋 Important Information</h6>
+                    <ul class="mb-0">
+                        <li>All passengers must have valid identification for domestic flights</li>
+                        <li>International flights require a valid passport</li>
+                        <li>Please arrive at the airport at least 2 hours before departure</li>
+                        <li>Cancellation policy applies as per terms and conditions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<!-- Page JS -->
+<!-- Location: src/main/resources/static/js/reservation-form.js -->
+<script th:src="@{/js/reservation-form.js}"></script>
+
+</body>
+</html>
