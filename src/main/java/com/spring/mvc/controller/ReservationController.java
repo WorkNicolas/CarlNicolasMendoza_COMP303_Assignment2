@@ -96,18 +96,32 @@ public class ReservationController {
     public String saveReservation(@Valid @ModelAttribute("reservation") Reservation reservation, BindingResult result,
 	    @RequestParam("flightId") Long flightId, @RequestParam("passengerId") Long passengerId, Model model) {
 
-	if (result.hasErrors()) {
-	    Flight flight = flightService.findById(flightId);
-	    model.addAttribute("flight", flight);
-	    return "reservation-form";
-	}
-
-	// Set relationships
+	// Get flight and passenger FIRST
 	Flight flight = flightService.findById(flightId);
 	Passenger passenger = passengerService.findById(passengerId);
 
+	// Check if flight or passenger is null
+	if (flight == null || passenger == null) {
+	    return "redirect:/flights?error=invalid";
+	}
+
+	// Set relationships BEFORE validation check (so form can display them if
+	// validation fails)
 	reservation.setFlight(flight);
 	reservation.setPassenger(passenger);
+
+	// If validation errors, add flight back to model and return to form
+	if (result.hasErrors()) {
+	    model.addAttribute("flight", flight);
+	    model.addAttribute("reservation", reservation);
+	    System.out.println("=== VALIDATION ERRORS ===");
+	    result.getAllErrors().forEach(error -> {
+		System.out.println("Error: " + error.getDefaultMessage());
+	    });
+	    return "reservation-form";
+	}
+
+	// Set booking date and status
 	reservation.setBooking_date(LocalDate.now());
 	reservation.setStatus("BOOKED");
 
@@ -115,8 +129,15 @@ public class ReservationController {
 	double totalPrice = flight.getPrice() * reservation.getNo_of_passengers();
 	reservation.setTotal_price(totalPrice);
 
-	reservationService.save(reservation);
-	return "redirect:/reservations/checkout/" + reservation.getReservation_id();
+	// Save reservation
+	Reservation savedReservation = reservationService.save(reservation);
+
+	System.out.println("=== RESERVATION SAVED ===");
+	System.out.println("Reservation ID: " + savedReservation.getReservation_id());
+	System.out.println("Status: " + savedReservation.getStatus());
+	System.out.println("Total Price: " + savedReservation.getTotal_price());
+
+	return "redirect:/reservations/checkout/" + savedReservation.getReservation_id();
     }
 
     @GetMapping("/checkout/{id}")
@@ -163,19 +184,47 @@ public class ReservationController {
 
     @PostMapping("/update/{id}")
     public String updateReservation(@PathVariable("id") Long id,
-	    @Valid @ModelAttribute("reservation") Reservation reservation, BindingResult result, Model model) {
+	    @Valid @ModelAttribute("reservation") Reservation reservation, BindingResult result,
+	    @RequestParam("flightId") Long flightId, @RequestParam("passengerId") Long passengerId, Model model) {
 
+	// Fetch the existing reservation from database
+	Reservation existingReservation = reservationService.findById(id);
+
+	if (existingReservation == null) {
+	    return "redirect:/reservations?error=notfound";
+	}
+
+	// Get flight and passenger from database
+	Flight flight = flightService.findById(flightId);
+	Passenger passenger = passengerService.findById(passengerId);
+
+	if (flight == null || passenger == null) {
+	    return "redirect:/reservations?error=invalid";
+	}
+
+	// Set the flight and passenger on the incoming reservation object for
+	// validation display
+	reservation.setFlight(flight);
+	reservation.setPassenger(passenger);
+
+	// If validation errors, return to form
 	if (result.hasErrors()) {
-	    model.addAttribute("flight", reservation.getFlight());
+	    model.addAttribute("flight", flight);
+	    model.addAttribute("reservation", reservation);
 	    return "reservation-form";
 	}
 
-	// Recalculate total price
-	double totalPrice = reservation.getFlight().getPrice() * reservation.getNo_of_passengers();
-	reservation.setTotal_price(totalPrice);
-	reservation.setReservation_id(id);
+	// Update the existing reservation with new values
+	existingReservation.setDeparture_date(reservation.getDeparture_date());
+	existingReservation.setNo_of_passengers(reservation.getNo_of_passengers());
 
-	reservationService.save(reservation);
+	// Recalculate total price using the flight from database
+	double totalPrice = flight.getPrice() * reservation.getNo_of_passengers();
+	existingReservation.setTotal_price(totalPrice);
+
+	// Save the updated reservation
+	reservationService.save(existingReservation);
+
 	return "redirect:/reservations?updated";
     }
 
@@ -197,5 +246,3 @@ public class ReservationController {
 	return "redirect:/reservations?deleted";
     }
 }
-
-// ========================================

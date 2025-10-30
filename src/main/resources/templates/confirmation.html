@@ -70,13 +70,13 @@ Submission Date: 2025-10-30
                                         </tr>
                                         <tr>
                                             <td><strong>Departure:</strong></td>
-                                            <td th:text="${#temporals.format(reservation.flight.departure_time, 'EEEE, MMMM dd, yyyy at HH:mm')}">
+                                            <td th:text="${#temporals.format(reservation.flight.departure_time, 'EEEE, MMMM dd, yyyy ''at'' HH:mm')}">
                                                 Monday, November 01, 2025 at 10:00
                                             </td>
                                         </tr>
                                         <tr>
                                             <td><strong>Arrival:</strong></td>
-                                            <td th:text="${#temporals.format(reservation.flight.arrival_time, 'EEEE, MMMM dd, yyyy at HH:mm')}">
+                                            <td th:text="${#temporals.format(reservation.flight.departure_time, 'EEEE, MMMM dd, yyyy ''at'' HH:mm')}">
                                                 Monday, November 01, 2025 at 14:30
                                             </td>
                                         </tr>

@@ -2,7 +2,8 @@
 Please run everything the following order.
 ## Reservation
 The name of the database is `Reservation`. It has three tables that automatically get created when the Spring Boot app runs.
-1. **Flight**
+
+**Flight**
 - flight_id (Primary Key, Auto-increment)
 - airline_name
 - origin
@@ -11,7 +12,7 @@ The name of the database is `Reservation`. It has three tables that automaticall
 - arrival_time
 - price
 
-2. **Passenger**
+**Passenger**
 - passenger_id (Primary Key, Auto-increment)
 - email
 - password
@@ -21,7 +22,7 @@ The name of the database is `Reservation`. It has three tables that automaticall
 - city
 - postal_code
 
-3. **Reservation**
+**Reservation**
 - reservation_id (Primary Key, Auto-increment)
 - passenger_id (Foreign Key to Passenger)
 - flight_id (Foreign Key to Flight)

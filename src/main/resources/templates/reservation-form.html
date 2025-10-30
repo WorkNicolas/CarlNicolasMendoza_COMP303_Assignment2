@@ -22,8 +22,8 @@ Submission Date: 2025-10-30
                             New Reservation
                         </h3>
                     </div>
+                    
                     <div class="card-body p-4">
-                        
                         <!-- Flight Details Summary -->
                         <div class="alert alert-info mb-4">
                             <h5 class="alert-heading">✈️ Flight Details</h5>
@@ -46,9 +46,9 @@ Submission Date: 2025-10-30
                             <hr class="my-2">
                             <p class="mb-0">
                                 <strong>Departure:</strong> 
-                                <span th:text="${#temporals.format(reservation.flight.departure_time, 'EEEE, MMMM dd, yyyy ''at'' HH:mm')}">
-								    Monday, November 01, 2025 at 10:00
-								</span>
+                                <span th:text="${#temporals.format(flight.departure_time, 'EEEE, MMMM dd, yyyy ''at'' HH:mm')}">
+                                    Monday, November 01, 2025 at 10:00
+                                </span>
                             </p>
                         </div>
 
@@ -57,9 +57,19 @@ Submission Date: 2025-10-30
                               th:object="${reservation}" method="post">
                             
                             <!-- Hidden fields -->
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                             <input type="hidden" name="flightId" th:value="${flight.flight_id}">
-                            <input type="hidden" name="passengerId" th:value="${reservation.passenger.passenger_id}">
-
+                            <input type="hidden" name="passengerId" th:value="${reservation.passenger != null ? reservation.passenger.passenger_id : ''}">
+                            
+                            <!-- Display Validation Errors - MOVED INSIDE FORM -->
+                            <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <h6 class="alert-heading"><strong>⚠️ Please correct the following errors:</strong></h6>
+                                <ul class="mb-0">
+                                    <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                                </ul>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            
                             <div class="mb-3">
                                 <label for="departure_date" class="form-label">Departure Date *</label>
                                 <input type="date" class="form-control" th:field="*{departure_date}" 

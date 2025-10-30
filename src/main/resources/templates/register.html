@@ -23,8 +23,18 @@ Submission Date: 2025-10-30
                         <!-- Error message if email exists -->
                         <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
 
-                        <form th:action="@{/register}" th:object="${passenger}" method="post">
-                        	<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <!-- 🔧 DEBUG: Auto-Register Section -->
+                        <div class="alert alert-warning" role="alert">
+                            <strong>⚠️ DEBUG MODE - Auto Register</strong>
+                            <p class="mb-2 small">Quick registration for testing</p>
+                            <button type="button" class="btn btn-sm btn-warning w-100" id="autoRegisterBtn">
+                                🔧 Auto-Fill Registration Form
+                            </button>
+                        </div>
+                        <!-- End DEBUG Section -->
+
+                        <form th:action="@{/register}" th:object="${passenger}" method="post" id="registerForm">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label for="firstname" class="form-label">First Name *</label>
@@ -97,6 +107,10 @@ Submission Date: 2025-10-30
 </main>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<!-- DEBUG: Auto-Register Script -->
+<script th:src="@{/js/debug/debug-register.js}"></script>
+<!-- End DEBUG Script -->
 
 </body>
 </html>

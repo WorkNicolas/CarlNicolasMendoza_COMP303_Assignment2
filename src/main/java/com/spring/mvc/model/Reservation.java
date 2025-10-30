@@ -30,9 +30,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 
 @Entity
 @Table(name = "Reservation")
@@ -50,7 +48,6 @@ public class Reservation {
     @JoinColumn(name = "flight_id", nullable = false)
     private Flight flight;
 
-    @NotNull(message = "Booking date is required")
     private LocalDate booking_date;
 
     @NotNull(message = "Departure date is required")
@@ -59,10 +56,8 @@ public class Reservation {
     @Min(value = 1, message = "Must have at least 1 passenger")
     private int no_of_passengers;
 
-    @Positive(message = "Total price must be positive")
     private Double total_price;
 
-    @NotBlank(message = "Status is required")
     private String status; // "BOOKED", "CANCELLED"
 
     // Getters and Setters
