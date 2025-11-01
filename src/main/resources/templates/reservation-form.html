@@ -59,7 +59,7 @@ Submission Date: 2025-10-30
                             <!-- Hidden fields -->
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                             <input type="hidden" name="flightId" th:value="${flight.flight_id}">
-                            <input type="hidden" name="passengerId" th:value="${reservation.passenger != null ? reservation.passenger.passenger_id : ''}">
+                            <input type="hidden" name="passengerId" th:value="${reservation.passenger != null ? reservation.passenger.passengerId : ''}">
                             
                             <!-- Display Validation Errors - MOVED INSIDE FORM -->
                             <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger alert-dismissible fade show" role="alert">

@@ -47,4 +47,9 @@ public class ReservationService {
     public void delete(Long id) {
 	repository.deleteById(id);
     }
+
+    public List<Reservation> findByPassengerId(Long passengerId) {
+	return repository.findByPassenger_PassengerId(passengerId);
+    }
+
 }

@@ -1,5 +1,5 @@
 # Database Tables
-Please run everything the following order.
+Please run SQL files according to the order given in the filename from 01 to 04.
 ## Reservation
 The name of the database is `Reservation`. It has three tables that automatically get created when the Spring Boot app runs.
 

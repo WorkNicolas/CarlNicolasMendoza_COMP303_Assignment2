@@ -22,6 +22,7 @@ package com.spring.mvc.model;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,8 +30,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Positive;
 
 @Entity
 @Table(name = "Reservation")
@@ -38,7 +42,8 @@ public class Reservation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reservation_id;
+    @Column(name = "reservation_id")
+    private Long reservationId;
 
     @ManyToOne
     @JoinColumn(name = "passenger_id", nullable = false)
@@ -48,25 +53,28 @@ public class Reservation {
     @JoinColumn(name = "flight_id", nullable = false)
     private Flight flight;
 
+    @PastOrPresent(message = "Booking date cannot be in the future")
     private LocalDate booking_date;
 
     @NotNull(message = "Departure date is required")
+    @Future(message = "Departure date must be in the future")
     private LocalDate departure_date;
 
     @Min(value = 1, message = "Must have at least 1 passenger")
     private int no_of_passengers;
 
+    @Positive
     private Double total_price;
 
     private String status; // "BOOKED", "CANCELLED"
 
     // Getters and Setters
     public Long getReservation_id() {
-	return reservation_id;
+	return reservationId;
     }
 
     public void setReservation_id(Long reservation_id) {
-	this.reservation_id = reservation_id;
+	this.reservationId = reservation_id;
     }
 
     public Passenger getPassenger() {

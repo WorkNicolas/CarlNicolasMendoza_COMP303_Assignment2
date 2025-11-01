@@ -19,6 +19,7 @@
  */
 package com.spring.mvc.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,7 +36,8 @@ public class Passenger {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long passenger_id;
+    @Column(name = "passenger_id")
+    private Long passengerId;
 
     @Email
     @NotBlank
@@ -50,19 +52,23 @@ public class Passenger {
     @NotBlank
     private String lastname;
 
+    @Size(max = 255, message = "Address must not exceed 255 characters")
     private String address;
+
+    @Size(max = 100, message = "City must not exceed 100 characters")
+    @Pattern(regexp = "^[\\p{L} .'-]*$", message = "City contains invalid characters")
     private String city;
 
     @Pattern(regexp = "\\d{4,6}", message = "Postal code must be 4–6 digits")
     private String postalCode;
 
     // getters and setters
-    public Long getPassenger_id() {
-	return passenger_id;
+    public Long getPassengerId() {
+	return passengerId;
     }
 
     public void setPassenger_id(Long passenger_id) {
-	this.passenger_id = passenger_id;
+	this.passengerId = passenger_id;
     }
 
     public String getEmail() {

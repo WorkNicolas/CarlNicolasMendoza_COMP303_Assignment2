@@ -21,11 +21,14 @@ package com.spring.mvc.model;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -36,6 +39,7 @@ public class Flight {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "flight_id")
     private Long flight_id;
 
     @NotBlank
@@ -46,10 +50,13 @@ public class Flight {
     private String destination;
 
     @NotNull
+    @Future
     private LocalDateTime departure_time;
     @NotNull
+    @Future
     private LocalDateTime arrival_time;
     @Positive
+    @NotNull
     private Double price;
 
     // getters and setters
@@ -108,4 +115,10 @@ public class Flight {
     public void setPrice(Double price) {
 	this.price = price;
     }
+
+    @AssertTrue(message = "Arrival must be after departure")
+    private boolean isArrivalAfterDeparture() {
+	return departure_time != null && arrival_time != null && arrival_time.isAfter(departure_time);
+    }
+
 }

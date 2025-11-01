@@ -61,12 +61,15 @@ public class ReservationController {
 
     @GetMapping
     public String listReservations(Model model, Principal principal) {
-	// Get current logged-in user
+	// Get the logged-in passenger
 	Passenger passenger = passengerService.findByEmail(principal.getName());
 
-	// For simplicity, showing all reservations
-	// In production, filter by passenger_id
-	List<Reservation> reservations = reservationService.findAll();
+	if (passenger == null) {
+	    return "redirect:/login";
+	}
+
+	// Filter reservations by this passenger only
+	List<Reservation> reservations = reservationService.findByPassengerId(passenger.getPassengerId());
 	model.addAttribute("reservations", reservations);
 	return "reservation-list";
     }
@@ -160,8 +163,7 @@ public class ReservationController {
 	    return "redirect:/reservations?error=notfound";
 	}
 
-	// In a real application, process payment here
-	// For now, just mark as confirmed
+	// Mock process payment
 	reservation.setStatus("CONFIRMED");
 	reservationService.save(reservation);
 
@@ -238,11 +240,5 @@ public class ReservationController {
 	}
 
 	return "redirect:/reservations?cancelled";
-    }
-
-    @GetMapping("/delete/{id}")
-    public String deleteReservation(@PathVariable("id") Long id) {
-	reservationService.delete(id);
-	return "redirect:/reservations?deleted";
     }
 }

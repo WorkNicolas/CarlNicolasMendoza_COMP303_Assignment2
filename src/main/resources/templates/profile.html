@@ -24,6 +24,12 @@ Submission Date: 2025-10-30
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
 
+                <!-- Error Message -->
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error!</strong> <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
                 <!-- Profile Card -->
                 <div class="card shadow mb-4">
                     <div class="card-header bg-primary text-white">
@@ -31,9 +37,9 @@ Submission Date: 2025-10-30
                     </div>
                     <div class="card-body p-4">
                         <form th:action="@{/profile/update}" th:object="${passenger}" method="post">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                             <!-- Hidden ID field -->
-                            <input type="hidden" th:field="*{passenger_id}">
+                            <input type="hidden" th:field="*{passengerId}">
 
                             <!-- Name Fields -->
                             <div class="row mb-3">
@@ -51,10 +57,12 @@ Submission Date: 2025-10-30
 
                             <!-- Email (Read-only) -->
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email Address</label>
-                                <input type="email" class="form-control" th:field="*{email}" id="email" readonly disabled>
-                                <small class="form-text text-muted">Email cannot be changed</small>
-                            </div>
+						        <label for="email" class="form-label">Email Address</label>
+						        <!-- remove 'disabled'; keep 'readonly' so it posts -->
+						        <input type="email" class="form-control" th:field="*{email}" id="email" readonly>
+						        <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+						        <small class="form-text text-muted">Email cannot be changed</small>
+						    </div>
 
                             <!-- Address -->
                             <div class="mb-3">
@@ -94,7 +102,7 @@ Submission Date: 2025-10-30
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <h6 class="text-muted">Account ID</h6>
-                                <p class="h5" th:text="${'#' + passenger.passenger_id}">#123</p>
+                                <p class="h5" th:text="${'#' + passenger.passengerId}">#123</p>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <h6 class="text-muted">Email</h6>
@@ -102,7 +110,7 @@ Submission Date: 2025-10-30
                             </div>
                             <div class="col-md-12">
                                 <h6 class="text-muted mb-3">Password</h6>
-                                <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#passwordModal">
+                                <button type="button" class="btn btn-outline-warning" id="openPasswordModal">
                                     Change Password
                                 </button>
                             </div>
@@ -144,42 +152,42 @@ Submission Date: 2025-10-30
 </main>
 
 <!-- Password Change Modal -->
-<div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="passwordModalLabel">Change Password</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="mb-3">
-                        <label for="currentPassword" class="form-label">Current Password</label>
-                        <input type="password" class="form-control" id="currentPassword" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="newPassword" class="form-label">New Password</label>
-                        <input type="password" class="form-control" id="newPassword" required>
-                        <small class="form-text text-muted">Must be at least 8 characters</small>
-                    </div>
-                    <div class="mb-3">
-                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" required>
-                    </div>
-                </form>
-                <div class="alert alert-warning">
-                    <small>⚠️ Password change functionality is not implemented in this demo version.</small>
+<div class="modal-overlay" id="passwordModal">
+    <div class="modal-content-custom">
+        <div class="modal-header-custom">
+            <h5>Change Password</h5>
+            <button type="button" class="close-modal" id="closePasswordModal">×</button>
+        </div>
+        <div class="modal-body-custom">
+            <form th:action="@{/profile/change-password}" method="post" id="passwordChangeForm">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <div class="mb-3">
+                    <label for="currentPassword" class="form-label">Current Password</label>
+                    <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" disabled>Update Password</button>
-            </div>
+                <div class="mb-3">
+                    <label for="newPassword" class="form-label">New Password</label>
+                    <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                    <small class="form-text text-muted">Must be at least 8 characters</small>
+                </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer-custom">
+            <button type="button" class="btn btn-secondary" id="cancelPasswordModal">Cancel</button>
+            <button type="submit" form="passwordChangeForm" class="btn btn-primary">Update Password</button>
         </div>
     </div>
 </div>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<!-- Page JS -->
+<!-- Location: src/main/resources/static/js/editpassword.js -->
+<script th:src="@{/js/editpassword.js}"></script>
 
 </body>
 </html>
